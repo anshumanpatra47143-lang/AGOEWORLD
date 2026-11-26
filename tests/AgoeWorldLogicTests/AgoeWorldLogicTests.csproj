@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="../../AgoeWorld-Unity/Assets/Scripts/AgoeWorldGameFlow.cs" Link="AgoeWorldGameFlow.cs" />
+    <Compile Include="../../AgoeWorld-Unity/Assets/Scripts/AgoeWorldNavigationButton.cs" Link="AgoeWorldNavigationButton.cs" />
+  </ItemGroup>
+</Project>

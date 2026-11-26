@@ -175,3 +175,8 @@ vite.config.ts.timestamp-*
 *.booproj
 *.svclog
 *.tmp
+
+# AgoeWorld .NET logic tests
+!tests/**/*.csproj
+tests/**/bin/
+tests/**/obj/

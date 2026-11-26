@@ -42,7 +42,10 @@ public class MobileJoystick : MonoBehaviour,
         if (radius <= 0f)
             return;
 
-        Direction = Vector2.ClampMagnitude(localPoint / radius, 1f);
+        Direction = Vector2.ClampMagnitude(
+            (localPoint - joystickArea.rect.center) / radius,
+            1f
+        );
         joystickHandle.anchoredPosition = Direction * radius;
     }
 

@@ -13,6 +13,7 @@ public class MobileHUD : MonoBehaviour
     [SerializeField] private float playerHealth = 100f;
 
     private float remainingTime;
+    private bool matchEnded;
 
     public void Initialize(Text health, Text timer, Text status)
     {
@@ -21,21 +22,26 @@ public class MobileHUD : MonoBehaviour
         playerStatusText = status;
 
         remainingTime = matchDuration;
+        matchEnded = false;
         UpdateHUD();
     }
 
     private void Start()
     {
         remainingTime = matchDuration;
+        matchEnded = false;
         UpdateHUD();
     }
 
     private void Update()
     {
-        if (remainingTime > 0f)
+        if (!matchEnded && remainingTime > 0f)
         {
             remainingTime -= Time.deltaTime;
             remainingTime = Mathf.Max(0f, remainingTime);
+
+            if (remainingTime <= 0f)
+                matchEnded = true;
         }
 
         UpdateHUD();
@@ -64,8 +70,12 @@ public class MobileHUD : MonoBehaviour
 
         if (playerStatusText != null)
         {
-            playerStatusText.text =
-                playerHealth > 0f ? "READY" : "OUT";
+            if (playerHealth <= 0f)
+                playerStatusText.text = "OUT";
+            else if (matchEnded)
+                playerStatusText.text = "MATCH ENDED";
+            else
+                playerStatusText.text = "READY";
         }
     }
 }

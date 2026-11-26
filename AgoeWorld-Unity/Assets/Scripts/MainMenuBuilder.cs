@@ -125,7 +125,15 @@ public class MainMenuBuilder : MonoBehaviour
         Button button = buttonObject.AddComponent<Button>();
         button.targetGraphic = image;
 
-        button.onClick.AddListener(() => OnMenuButton(label));
+        AgoeWorldNavigationButton navigation =
+            buttonObject.AddComponent<AgoeWorldNavigationButton>();
+
+        if (label == "PLAY")
+            navigation.buttonAction = AgoeWorldButtonAction.OpenLobby;
+        else if (label == "PROFILE")
+            navigation.buttonAction = AgoeWorldButtonAction.Profile;
+        else if (label == "SETTINGS")
+            navigation.buttonAction = AgoeWorldButtonAction.Settings;
 
         GameObject labelObject = new GameObject("Label");
         labelObject.transform.SetParent(buttonObject.transform, false);
@@ -152,10 +160,19 @@ public class MainMenuBuilder : MonoBehaviour
         Debug.Log("AgoeWorld Menu Button: " + buttonName);
 
         if (buttonName == "PLAY")
-            Debug.Log("Play selected. Game scene connection is pending.");
+        {
+            if (AgoeWorldGameFlow.Instance != null)
+                AgoeWorldGameFlow.Instance.OpenLobby();
+            else
+                Debug.LogError("AgoeWorldGameFlow is not initialized.");
+        }
         else if (buttonName == "PROFILE")
+        {
             Debug.Log("Profile selected. Profile screen is pending.");
+        }
         else if (buttonName == "SETTINGS")
+        {
             Debug.Log("Settings selected. Settings screen is pending.");
+        }
     }
 }
