@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>AgoeWorld Phone Test v0.4</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#071522;color:white;
+ font-family:Arial,sans-serif;overflow:hidden;
+ touch-action:none
+}
+header{
+ height:48px;display:flex;align-items:center;
+ justify-content:space-between;padding:0 16px;
+ background:#0d2638;border-bottom:1px solid #1b6071
+}
+header strong{color:#51e8f5;letter-spacing:2px}
+#status{font-size:11px;color:#a8d9df}
+#arena{
+ position:relative;width:100vw;height:calc(100dvh - 48px);
+ overflow:hidden;background:#172f35
+}
+#world{
+ position:absolute;width:900px;height:1200px;
+ left:50%;top:50%;margin-left:-450px;margin-top:-600px;
+ background-color:#526b50;
+ background-image:
+ linear-gradient(90deg,transparent 48%,#687b5b 48%,#687b5b 52%,transparent 52%),
+ repeating-linear-gradient(0deg,transparent 0 95px,#496248 96px 100px);
+ transition:transform .04s linear;
+}
+.road{
+ position:absolute;background:#394c51;
+ border:3px solid #53666a
+}
+.road.one{left:0;top:520px;width:900px;height:130px}
+.road.two{left:380px;top:0;width:130px;height:1200px}
+.building{
+ position:absolute;background:#263c4a;
+ border:5px solid #78908c;border-radius:9px;
+ box-shadow:inset 0 0 20px #101d28,0 7px 12px #172b2b
+}
+.tree{
+ position:absolute;width:42px;height:42px;border-radius:50%;
+ background:#244d3b;border:5px solid #397052;
+ box-shadow:0 5px 8px #263d31
+}
+.rock{
+ position:absolute;width:35px;height:25px;
+ background:#89918b;border-radius:40% 50% 35% 45%;
+ border:3px solid #596d69
+}
+#player{
+ position:absolute;width:32px;height:42px;
+ left:434px;top:579px;z-index:10;
+ transform:translate(-50%,-50%) rotate(var(--angle, 0deg));
+}
+#player .body{
+ position:absolute;left:4px;top:12px;width:24px;height:27px;
+ background:linear-gradient(90deg,#00a9c8,#42efff);
+ border:2px solid #b8ffff;border-radius:8px;
+ box-shadow:0 0 15px #00dfff
+}
+#player .head{
+ position:absolute;left:8px;top:0;width:16px;height:16px;
+ border-radius:50%;background:#e5c49c;border:2px solid #fff0d0
+}
+#player .direction{
+ position:absolute;left:12px;top:-10px;
+ width:8px;height:10px;background:#fff;border-radius:5px
+}
+
+#player.moving .body {
+ animation: runBody .18s infinite alternate ease-in-out;
+}
+#player.moving .head {
+ animation: runHead .18s infinite alternate ease-in-out;
+}
+@keyframes runBody {
+ from { transform: translateY(0) scaleY(1); }
+ to { transform: translateY(-3px) scaleY(.94); }
+}
+@keyframes runHead {
+ from { transform: translateY(0); }
+ to { transform: translateY(-2px); }
+}
+#controls{
+ position:absolute;bottom:26px;left:0;right:0;
+ display:flex;align-items:center;justify-content:space-between;
+ padding:0 25px;pointer-events:none
+}
+#joy{
+ width:112px;height:112px;border-radius:50%;
+ border:2px solid #83eaf2;background:#153c4dba;
+ position:relative;pointer-events:auto;touch-action:none
+}
+#stick{
+ position:absolute;width:46px;height:46px;left:31px;top:31px;
+ border-radius:50%;background:#4ce8f5;
+ box-shadow:0 0 18px #00cde5
+}
+#info{
+ font-size:11px;color:#a9d6db;text-align:center;
+ margin-top:7px
+}
+#exit{
+ pointer-events:auto;background:#102e40;color:white;
+ border:1px solid #54ddec;border-radius:8px;
+ padding:13px 17px;font-weight:bold
+}
+#hint{
+ position:absolute;top:12px;left:0;right:0;
+ text-align:center;color:#bdebf0;font-size:11px;
+ pointer-events:none
+}
+
+.screen{display:none}
+.screen.active{display:block}
+.menu-screen{
+ min-height:calc(100dvh - 48px);padding:25px 18px;
+ text-align:center;
+ background:radial-gradient(circle at 50% 25%,#16445a,#071522 70%);
+}
+.menu-screen h1{color:#51e8f5;letter-spacing:3px;margin:45px 0 8px}
+.menu-panel{
+ max-width:390px;margin:35px auto 20px;padding:25px 15px;
+ border:1px solid #28647a;border-radius:16px;background:#10283b;
+}
+.menu-avatar{
+ width:75px;height:110px;margin:15px auto;position:relative;
+}
+.menu-avatar:before{
+ content:"";position:absolute;top:0;left:27px;width:22px;height:22px;
+ border-radius:50%;background:#e5c49c;
+}
+.menu-avatar:after{
+ content:"";position:absolute;top:25px;left:17px;width:42px;height:75px;
+ border-radius:12px;background:linear-gradient(#42efff,#08769b);
+ border:2px solid #b8ffff;
+}
+.menu-screen button{
+ display:block;width:min(320px,95%);margin:12px auto;padding:15px;
+ border:1px solid #54ddec;border-radius:9px;
+ background:#102e40;color:white;font-weight:bold;
+}
+.menu-screen button.primary{background:#00a9c7;color:#06131d}
+
+</style>
+</head>
+<body>
+<header>
+ <strong>AGOEWORLD</strong>
+ <span id="status">PHONE TEST v0.4</span>
+</header>
+
+<section id="home" class="screen active menu-screen">
+ <h1>AGOEWORLD</h1>
+ <p>MOBILE GAME TEST</p>
+ <div class="menu-panel">
+  <div class="menu-avatar"></div>
+  <p>WELCOME, PLAYER</p>
+  <p>Original AgoeWorld Character</p>
+ </div>
+ <button class="primary" onclick="show('lobby')">PLAY</button>
+ <button onclick="alert('Profile preview coming soon')">PROFILE</button>
+ <button onclick="alert('Settings preview coming soon')">SETTINGS</button>
+</section>
+
+<section id="lobby" class="screen menu-screen">
+ <h1>GAME LOBBY</h1>
+ <div class="menu-panel">
+  <div class="menu-avatar"></div>
+  <p>AGOEWORLD WARRIOR</p>
+  <p>Ready for the arena</p>
+ </div>
+ <button onclick="show('character')">CHARACTER</button>
+ <button class="primary" onclick="show('game')">START MATCH</button>
+ <button onclick="show('home')">BACK TO MAIN MENU</button>
+</section>
+
+<section id="character" class="screen menu-screen">
+ <h1>CHARACTER</h1>
+ <div class="menu-panel">
+  <div class="menu-avatar"></div>
+  <p>AGOE WARRIOR</p>
+  <p>Character Selection Preview</p>
+ </div>
+ <button class="primary" onclick="show('game')">SELECT & CONTINUE</button>
+ <button onclick="show('lobby')">BACK TO LOBBY</button>
+</section>
+
+<section id="game" class="screen">
+<div id="arena">
+ <div id="hint">MOVE WITH THE JOYSTICK</div>
+ <div id="world">
+  <div class="road one"></div>
+  <div class="road two"></div>
+
+  <div class="building" style="left:80px;top:100px;width:180px;height:130px"></div>
+  <div class="building" style="left:600px;top:120px;width:190px;height:160px"></div>
+  <div class="building" style="left:90px;top:820px;width:190px;height:150px"></div>
+  <div class="building" style="left:610px;top:850px;width:180px;height:170px"></div>
+  <div class="building" style="left:620px;top:390px;width:140px;height:90px"></div>
+
+  <div class="tree" style="left:320px;top:170px"></div>
+  <div class="tree" style="left:540px;top:320px"></div>
+  <div class="tree" style="left:300px;top:760px"></div>
+  <div class="tree" style="left:520px;top:1030px"></div>
+  <div class="tree" style="left:820px;top:700px"></div>
+  <div class="tree" style="left:60px;top:440px"></div>
+
+  <div class="rock" style="left:300px;top:400px"></div>
+  <div class="rock" style="left:550px;top:720px"></div>
+  <div class="rock" style="left:750px;top:570px"></div>
+
+  <div id="player">
+   <div class="direction"></div>
+   <div class="head"></div>
+   <div class="body"></div>
+  </div>
+ </div>
+
+ <div id="controls">
+  <div>
+   <div id="joy"><div id="stick"></div></div>
+   <div id="info">Movement: <span id="coords">0.0, 0.0</span></div>
+  </div>
+  <button id="exit">EXIT TO LOBBY</button>
+ </div>
+</div>
+</section>
+
+<script>
+function show(id){
+ document.querySelectorAll(".screen").forEach(
+  screen=>screen.classList.remove("active")
+ );
+ document.getElementById(id).classList.add("active");
+}
+const world=document.getElementById("world");
+const player=document.getElementById("player");
+const joy=document.getElementById("joy");
+const stick=document.getElementById("stick");
+const coords=document.getElementById("coords");
+
+let x=450,y=600,dx=0,dy=0;
+let active=false;
+let last=performance.now();
+
+function camera(){
+ const w=window.innerWidth;
+ const h=window.innerHeight-48;
+ const px=w/2-x;
+ const py=h/2-y;
+ world.style.transform=`translate(${px}px,${py}px)`;
+}
+function loop(now){
+ const dt=Math.min((now-last)/16.67,2);
+ last=now;
+ x+=dx*3.2*dt;
+ y+=dy*3.2*dt;
+ x=Math.max(20,Math.min(880,x));
+ y=Math.max(20,Math.min(1180,y));
+ player.style.left=x+"px";
+ player.style.top=y+"px";
+ const moving = Math.hypot(dx,dy) > 0.08;
+ player.classList.toggle("moving", moving);
+ if(moving){
+  const angle = Math.atan2(dy,dx) * 180 / Math.PI + 90;
+  player.style.setProperty("--angle", angle + "deg");
+ }
+ camera();
+ coords.textContent=dx.toFixed(1)+", "+dy.toFixed(1);
+ requestAnimationFrame(loop);
+}
+function moveStick(e){
+ if(!active)return;
+ const r=joy.getBoundingClientRect();
+ const cx=r.left+r.width/2;
+ const cy=r.top+r.height/2;
+ let vx=e.clientX-cx,vy=e.clientY-cy;
+ const max=34;
+ const len=Math.hypot(vx,vy);
+ if(len>max){vx=vx/len*max;vy=vy/len*max}
+ dx=vx/max;dy=vy/max;
+ stick.style.transform=`translate(${vx}px,${vy}px)`;
+}
+joy.addEventListener("pointerdown",e=>{
+ active=true;
+ joy.setPointerCapture(e.pointerId);
+ moveStick(e);
+});
+joy.addEventListener("pointermove",moveStick);
+function stop(){
+ active=false;dx=0;dy=0;
+ stick.style.transform="translate(0,0)";
+}
+joy.addEventListener("pointerup",stop);
+joy.addEventListener("pointercancel",stop);
+document.getElementById("exit").addEventListener("click",()=>{
+ show('lobby');
+});
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

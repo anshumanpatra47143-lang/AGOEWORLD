@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>AgoeWorld Phone Test</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#08111f;color:white;font-family:Arial,sans-serif;overflow:hidden}
+.screen{display:none;min-height:100dvh;padding:24px 18px;background:radial-gradient(circle at 50% 25%,#16445a,#08111f 65%)}
+.screen.active{display:flex;flex-direction:column;align-items:center}
+h1{font-size:38px;letter-spacing:3px;margin:35px 0 8px;color:#55eaff}
+.sub{color:#a8c6d2;margin-bottom:35px}
+button{width:min(320px,90%);padding:16px;margin:9px;border:1px solid #55eaff;border-radius:10px;background:#102d40;color:white;font-size:17px;font-weight:bold}
+button.primary{background:#00a9c7;color:#06131d}
+button:active{transform:scale(.97)}
+.panel{width:100%;max-width:420px;background:#102235;border:1px solid #24536b;border-radius:16px;padding:20px;text-align:center}
+.avatar{width:120px;height:210px;margin:25px auto;position:relative}
+.head{position:absolute;top:0;left:37px;width:48px;height:48px;border-radius:50%;background:#d7e5eb}
+.body{position:absolute;top:50px;left:25px;width:72px;height:90px;border-radius:22px;background:linear-gradient(140deg,#19c6dc,#15516d);border:3px solid #7ceeff}
+.visor{position:absolute;top:18px;left:38px;width:46px;height:15px;background:#00eaff;border-radius:8px}
+.leg{position:absolute;top:137px;width:27px;height:68px;background:#263e55;border-radius:12px}
+.leg.left{left:28px}.leg.right{left:67px}
+.arena{position:relative;width:100%;max-width:430px;height:48vh;min-height:300px;border:2px solid #34748a;border-radius:16px;overflow:hidden;background:linear-gradient(#173b4d 0 55%,#263c42 55%)}
+.arena:after{content:"";position:absolute;bottom:0;left:0;right:0;height:35%;background:repeating-linear-gradient(90deg,#354e4b 0 35px,#405b50 36px 70px)}
+.player{position:absolute;z-index:2;left:50%;top:52%;width:30px;height:55px;border-radius:12px 12px 5px 5px;background:#00cce8;transform:translate(-50%,-50%);box-shadow:0 0 20px #00dfff}
+.joystick{width:120px;height:120px;border-radius:50%;background:#ffffff20;border:2px solid #8bd9e9;position:relative;touch-action:none;margin-top:15px}
+.knob{width:48px;height:48px;border-radius:50%;background:#55eaff;position:absolute;left:34px;top:34px}
+.status{color:#a8c6d2;font-size:13px;margin-top:10px}
+</style>
+</head>
+<body>
+<section id="home" class="screen active">
+  <h1>AGOEWORLD</h1>
+  <div class="sub">MOBILE TEST PROTOTYPE</div>
+  <div class="panel">
+    <div class="avatar"><div class="head"></div><div class="visor"></div><div class="body"></div><div class="leg left"></div><div class="leg right"></div></div>
+    <p>Welcome, Player</p>
+  </div>
+  <button class="primary" onclick="show('lobby')">PLAY</button>
+  <button onclick="alert('Profile test screen')">PROFILE</button>
+  <button onclick="alert('Settings test screen')">SETTINGS</button>
+  <div class="status">AgoeWorld phone preview • v0.1</div>
+</section>
+
+<section id="lobby" class="screen">
+  <h1>LOBBY</h1>
+  <div class="panel">
+    <div class="avatar"><div class="head"></div><div class="visor"></div><div class="body"></div><div class="leg left"></div><div class="leg right"></div></div>
+    <p>Original AgoeWorld Character</p>
+    <p class="status">Lobby preview</p>
+  </div>
+  <button onclick="show('character')">CHARACTER</button>
+  <button class="primary" onclick="show('game')">START MATCH</button>
+  <button onclick="show('home')">BACK</button>
+</section>
+
+<section id="character" class="screen">
+  <h1>CHARACTER</h1>
+  <div class="panel">
+    <div class="avatar"><div class="head"></div><div class="visor"></div><div class="body"></div><div class="leg left"></div><div class="leg right"></div></div>
+    <p>AGOE WARRIOR</p>
+    <p class="status">Character selection preview</p>
+  </div>
+  <button class="primary" onclick="show('game')">SELECT & CONTINUE</button>
+  <button onclick="show('lobby')">BACK TO LOBBY</button>
+</section>
+
+<section id="game" class="screen">
+  <h1 style="font-size:28px;margin-top:10px">GAMEPLAY TEST</h1>
+  <div class="arena" id="arena">
+    <div class="player" id="player"></div>
+  </div>
+  <div class="joystick" id="joy"><div class="knob" id="knob"></div></div>
+  <div class="status" id="coords">Touch joystick to move the player</div>
+  <button onclick="show('lobby')">EXIT TO LOBBY</button>
+</section>
+
+<script>
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+const joy=document.getElementById('joy');
+const knob=document.getElementById('knob');
+const player=document.getElementById('player');
+const arena=document.getElementById('arena');
+const coords=document.getElementById('coords');
+let active=false,x=0,y=0,px=50,py=52;
+function move(e){
+  if(!active)return;
+  const r=joy.getBoundingClientRect();
+  const t=e.touches?e.touches[0]:e;
+  let dx=t.clientX-(r.left+r.width/2);
+  let dy=t.clientY-(r.top+r.height/2);
+  const max=36,len=Math.hypot(dx,dy);
+  if(len>max){dx=dx/len*max;dy=dy/len*max}
+  knob.style.transform=`translate(${dx}px,${dy}px)`;
+  x=dx/max;y=dy/max;
+  px=Math.max(5,Math.min(95,px+x*1.5));
+  py=Math.max(5,Math.min(95,py+y*1.5));
+  player.style.left=px+'%';player.style.top=py+'%';
+  coords.textContent=`Movement input: X ${x.toFixed(1)} | Y ${y.toFixed(1)}`;
+}
+function stop(){
+  active=false;x=0;y=0;
+  knob.style.transform='translate(0,0)';
+}
+joy.addEventListener('touchstart',e=>{active=true;move(e);e.preventDefault()},{passive:false});
+joy.addEventListener('touchmove',e=>{move(e);e.preventDefault()},{passive:false});
+joy.addEventListener('touchend',stop);
+joy.addEventListener('touchcancel',stop);
+joy.addEventListener('pointerdown',e=>{active=true;joy.setPointerCapture(e.pointerId);move(e)});
+joy.addEventListener('pointermove',move);
+joy.addEventListener('pointerup',stop);
+joy.addEventListener('pointercancel',stop);
+</script>
+</body>
+</html>
